@@ -30,7 +30,7 @@ if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
   })
-  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') that.log = () => {
+  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {
   };
 } else {
   let cookiesData = $.getdata('CookiesJD') || "[]";
@@ -53,7 +53,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action?functionId=`;
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     if (cookie) {
-      if (i) that.log(`\n***************开始京东账号${i + 1}***************`)
+      if (i) console.log(`\n***************开始京东账号${i + 1}***************`)
       initial();
       await  QueryJDUserInfo();
       if (!merge.enabled)  //cookie不可用
@@ -62,7 +62,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action?functionId=`;
         $.msg($.name, `【提示】京东账号${i ? i + 1 : "" } cookie已过期！请先获取cookie\n直接使用NobyDa的京东签到获取`, 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
         continue;
       }
-      that.log('\n\n京东账号：'+merge.nickname + ' 任务开始')
+      console.log('\n\n京东账号：'+merge.nickname + ' 任务开始')
       await zoo_pk_getHomeData();
       await zoo_getHomeData();
       await qryCompositeMaterials()
@@ -123,25 +123,25 @@ function zoo_getTaskDetail(shopSign = "",appSign = "",timeout = 0){
         body : `functionId=zoo_getTaskDetail&body={${appSign}"shopSign":"${shopSign}"}&client=wh5&clientVersion=1.0.0`
       }
       //if (shopSign) {
-        //that.log(shopSign)
+        //console.log(shopSign)
       //  url.url = url.url.replace('zoo_getTaskDetail','zoo_shopLotteryInfo')
       //  url.body = url.body.replace('zoo_getTaskDetail','zoo_shopLotteryInfo')
       //}
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log('zoo_getTaskDetail:' + data)
+          //console.log('zoo_getTaskDetail:' + data)
           data = JSON.parse(data);
           if (shopSign === "") {
             shopSign = '""'
-            if (appSign === "" && data.data.result) that.log(`您的个人助力码：${data.data.result.inviteId}`)
+            if (appSign === "" && data.data.result) console.log(`您的个人助力码：${data.data.result.inviteId}`)
           }
           if (!data.data.result) return
           for (let i = 0;i < data.data.result.taskVos.length;i ++) {
             //if (merge.black)  return ;
-            that.log( "\n" + data.data.result.taskVos[i].taskType + '-' + data.data.result.taskVos[i].taskName + (appSign&&"（微信小程序）") + '-'  +  (data.data.result.taskVos[i].status === 1 ? `已完成${data.data.result.taskVos[i].times}-未完成${data.data.result.taskVos[i].maxTimes}` : "全部已完成")  )
+            console.log( "\n" + data.data.result.taskVos[i].taskType + '-' + data.data.result.taskVos[i].taskName + (appSign&&"（微信小程序）") + '-'  +  (data.data.result.taskVos[i].status === 1 ? `已完成${data.data.result.taskVos[i].times}-未完成${data.data.result.taskVos[i].maxTimes}` : "全部已完成")  )
             if ([1,3,5,7,9,26].includes(data.data.result.taskVos[i].taskType) && data.data.result.taskVos[i].status === 1 ) {
               let list = data.data.result.taskVos[i].brandMemberVos||data.data.result.taskVos[i].followShopVo||data.data.result.taskVos[i].shoppingActivityVos||data.data.result.taskVos[i].browseShopVo
-              //that.log(list)
+              //console.log(list)
               //if (data.data.result.taskVos[i].taskType === 9) continue
               for (let k = data.data.result.taskVos[i].times; k < data.data.result.taskVos[i].maxTimes; k++) {
                 //body : `functionId=zoo_collectProduceScore&body={"ss":"{\\"extraData\\":{\\"is_trust\\":true,\\"sign\\":\\"${sign}\\",\\"fpb\\":\\"xAX3mMUyCgH120XCrQXIZUw==\\",\\"time\\":${time},\\"encrypt\\":\\"3\\",\\"nonstr\\":\\"${nonstr}\\",\\"jj\\":\\"\\",\\"token\\":\\"d89985df35e6a2227fd2e85fe78116d2\\",\\"cf_v\\":\\"1.0.1\\",\\"client_version\\":\\"2.1.3\\",\\"sceneid\\":\\"homePageh5\\"},\\"businessData\\":{\\"taskId\\":\\"collectProducedCoin\\",\\"rnd\\":\\"${rnd}\\",\\"inviteId\\":\\"-1\\",\\"stealId\\":\\"-1\\"},\\"secretp\\":\\"${secretp}\\"}"}&client=wh5&clientVersion=1.0.0`
@@ -154,8 +154,8 @@ function zoo_getTaskDetail(shopSign = "",appSign = "",timeout = 0){
                     let msg = `random=${rnd}&token=d89985df35e6a2227fd2e85fe78116d2&time=${time}&nonce_str=${nonstr}&key=${key}&is_trust=true`
                     let sign = bytesToHex(wordsToBytes(getSign(msg))).toUpperCase() //,\"random\":\"${rnd}\"
                     let taskBody = `functionId=zoo_collectScore&body={"taskId":${data.data.result.taskVos[i].taskId},"taskToken" : "${list[j].taskToken}","ss":"{\\"extraData\\":{\\"is_trust\\":true,\\"sign\\":\\"${sign}\\",\\"fpb\\":\\"\\",\\"time\\":${time},\\"encrypt\\":\\"3\\",\\"nonstr\\":\\"${nonstr}\\",\\"jj\\":\\"\\",\\"token\\":\\"d89985df35e6a2227fd2e85fe78116d2\\",\\"cf_v\\":\\"1.0.2\\",\\"client_version\\":\\"2.2.1\\",\\"buttonid\\":\\"jmdd-react-smash_62\\",\\"sceneid\\":\\"homePageh5\\"},\\"secretp\\":\\"${secretp}\\",\\"random\\":\\"${rnd}\\"}","itemId":"${list[j].itemId}","actionType":1,"shopSign":${shopSign}}&client=wh5&clientVersion=1.0.0`
-                    //that.log(taskBody)
-                    that.log("\n"+(list[j].title||list[j].shopName))
+                    //console.log(taskBody)
+                    console.log("\n"+(list[j].title||list[j].shopName))
                     await zoo_collectScore(taskBody,2000)
                     //}
                     list[j].status = 2;
@@ -224,12 +224,12 @@ function zoo_myMap(timeout = 0){
       }
       $.post(url, async (err, resp, data) => {
         try {
-          that.log('zoo_myMap:' + data)
+          console.log('zoo_myMap:' + data)
           data = JSON.parse(data);
           for (let i in data.data.result.shopList) {
             // (data.data.result.shopList[i].status === 1) {
-              //that.log(data.data.result.shopList[i])
-            that.log('\n开始小镇任务：'+ data.data.result.shopList[i].name)// + '-' + data.data.result.shopList[i].shopId
+              //console.log(data.data.result.shopList[i])
+            console.log('\n开始小镇任务：'+ data.data.result.shopList[i].name)// + '-' + data.data.result.shopList[i].shopId
             await zoo_getTaskDetail(data.data.result.shopList[i].shopId)
             //}
           }
@@ -271,13 +271,13 @@ function zoo_shopSignInWrite(shopSign,timeout = 0){
       }
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(data)
+          //console.log(data)
           data = JSON.parse(data);
           if (data.data.bizCode !== 0) {
-            that.log(data.data.bizMsg)
+            console.log(data.data.bizMsg)
             merge.end = true
           } else {
-            that.log('获得金币' + data.data.result.score)
+            console.log('获得金币' + data.data.result.score)
           }
         } catch (e) {
           $.logErr(e, resp);
@@ -309,13 +309,13 @@ function zoo_shopSignInRead(shopSign,timeout = 0){
       }
       $.post(url, async (err, resp, data) => {
         try {
-        //   that.log(data)
+        //   console.log(data)
           data = JSON.parse(data);
           if (data.data.result.signInTag === 0) {
              secretp = secretp||data.data.result.secretp
              await zoo_shopSignInWrite(shopSign)
           } else {
-            that.log('已逛过')
+            console.log('已逛过')
           }
         } catch (e) {
           $.logErr(e, resp);
@@ -351,17 +351,17 @@ function zoo_collectProduceScore(timeout = 0){
         },
         body : `functionId=zoo_collectProduceScore&body={"ss":"{\\"extraData\\":{\\"is_trust\\":true,\\"sign\\":\\"${sign}\\",\\"fpb\\":\\"\\",\\"time\\":${time},\\"encrypt\\":\\"3\\",\\"nonstr\\":\\"${nonstr}\\",\\"jj\\":\\"\\",\\"token\\":\\"d89985df35e6a2227fd2e85fe78116d2\\",\\"cf_v\\":\\"1.0.2\\",\\"client_version\\":\\"2.2.1\\",\\"buttonid\\":\\"jmdd-react-smash_0\\",\\"sceneid\\":\\"homePageh5\\"},\\"secretp\\":\\"${secretp}\\",\\"random\\":\\"${rnd}\\"}"}&client=wh5&clientVersion=1.0.0`
       }
-      //that.log(url.body)
+      //console.log(url.body)
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(data)
+          //console.log(data)
           data = JSON.parse(data);
           if (data.data.bizCode === -1002) {
-            //that.log('此账号暂不可使用脚本，脚本终止！')
+            //console.log('此账号暂不可使用脚本，脚本终止！')
             //merge.black = true;
             return ;
           }
-          if (data.data.result) that.log(`\n收取金币：${data.data.result.produceScore}`)
+          if (data.data.result) console.log(`\n收取金币：${data.data.result.produceScore}`)
         } catch (e) {
           $.logErr(e, resp);
         } finally {
@@ -392,7 +392,7 @@ function zoo_pk_getStealForms(taskBody,timeout = 0){
       }
       $.post(url, async (err, resp, data) => {
         try {
-        //   that.log(data)
+        //   console.log(data)
           data = JSON.parse(data);
         } catch (e) {
           $.logErr(e, resp);
@@ -421,25 +421,25 @@ function zoo_collectScore(taskBody,timeout = 0){
         },
         body : taskBody
       }
-      //that.log(url.body)
+      //console.log(url.body)
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(data)
+          //console.log(data)
           data = JSON.parse(data);
-          that.log('任务执行结果：' + data.data.bizMsg)
+          console.log('任务执行结果：' + data.data.bizMsg)
           if (data.data.bizCode === -1002) {
-            //that.log(url.body)
-            that.log('\n提示火爆，休息5秒')
+            //console.log(url.body)
+            console.log('\n提示火爆，休息5秒')
             await $.wait(5000)
             //await zoo_collectScore(taskBody)
-            //that.log('此账号暂不可使用脚本，脚本终止！')
+            //console.log('此账号暂不可使用脚本，脚本终止！')
             //merge.black = true;
             return ;
           }
           if (data.data.bizCode === 0 && typeof data.data.result.taskToken !== "undefined") {
-            //that.log('需要再次执行,如提示活动异常请多次重试，个别任务多次执行也不行就去APP做吧！')
+            //console.log('需要再次执行,如提示活动异常请多次重试，个别任务多次执行也不行就去APP做吧！')
             let taskBody = encodeURIComponent(`{"dataSource":"newshortAward","method":"getTaskAward","reqParams":"{\\"taskToken\\":\\"${data.data.result.taskToken}\\"}","sdkVersion":"1.0.0","clientLanguage":"zh"}`)
-            //that.log(taskBody)
+            //console.log(taskBody)
             await qryViewkitCallbackResult(taskBody,7000)
           }
         } catch (e) {
@@ -470,14 +470,14 @@ function zoo_doAdditionalTask(taskBody,timeout = 0){
         },
         body : taskBody
       }
-      //that.log(url.body)
+      //console.log(url.body)
       $.post(url, async (err, resp, data) => {
         try {
-        //   that.log(data)
+        //   console.log(data)
           data = JSON.parse(data);
-          that.log('任务执行结果：' + data.data.bizMsg)
+          console.log('任务执行结果：' + data.data.bizMsg)
           if (data.data.bizCode === -1002) {
-            that.log('\n提示火爆，休息5秒')
+            console.log('\n提示火爆，休息5秒')
             await $.wait(5000)
             return ;
           }
@@ -510,10 +510,10 @@ function zoo_getFeedDetail(taskId,timeout = 0){
         },
         body : `functionId=zoo_getFeedDetail&body={"taskId":"${taskId}"}&client=wh5&clientVersion=1.0.0`
       }
-      //that.log(url)
+      //console.log(url)
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(data)
+          //console.log(data)
           data = JSON.parse(data);
           let list =  data.data.result.viewProductVos||data.data.result.addProductVos
           for (let i in list) {
@@ -528,9 +528,9 @@ function zoo_getFeedDetail(taskId,timeout = 0){
                 let msg = `random=${rnd}&token=d89985df35e6a2227fd2e85fe78116d2&time=${time}&nonce_str=${nonstr}&key=${key}&is_trust=true`
                 let sign = bytesToHex(wordsToBytes(getSign(msg))).toUpperCase() //,\"random\":\"${rnd}\"
                 let taskBody = `functionId=zoo_collectScore&body={"taskId":${list[i].taskId},"ss":"{\\"extraData\\":{\\"is_trust\\":true,\\"sign\\":\\"${sign}\\",\\"fpb\\":\\"\\",\\"time\\":${time},\\"encrypt\\":\\"3\\",\\"nonstr\\":\\"${nonstr}\\",\\"jj\\":\\"\\",\\"token\\":\\"d89985df35e6a2227fd2e85fe78116d2\\",\\"cf_v\\":\\"1.0.2\\",\\"client_version\\":\\"2.2.1\\",\\"buttonid\\":\\"jmdd-react-smash_62\\",\\"sceneid\\":\\"homePageh5\\"},\\"secretp\\":\\"${secretp}\\",\\"random\\":\\"${rnd}\\"}","itemId":"${list[i].productInfoVos[j].skuId}","actionType":1}&client=wh5&clientVersion=1.0.0`
-                //that.log(taskBody)
+                //console.log(taskBody)
                 //body={"taskId":${list[i].taskId},"itemId":"${list[i].productInfoVos[j].skuId}","ss":"{\\"extraData\\":{\\"is_trust\\":true,\\"sign\\":\\"${sign}\\",\\"time\\":${time},\\"encrypt\\":\\"3\\",\\"nonstr\\":\\"${nonstr}\\",\\"jj\\":\\"\\",\\"token\\":\\"d89985df35e6a2227fd2e85fe78116d2\\",\\"cf_v\\":\\"1.0.1\\",\\"client_version\\":\\"2.1.3\\",\\"sceneid\\":\\"homePageh5\\"},\\"random\\":\\"${rnd}\\",\\"secretp\\":\\"${secretp}\\"}","shopSign":""}&client=wh5&clientVersion=1.0.0`
-                that.log(list[i].productInfoVos[j].skuName)
+                console.log(list[i].productInfoVos[j].skuName)
                 await zoo_collectScore(taskBody,1000)
               }
               list[i].status = 2
@@ -569,10 +569,10 @@ function qryViewkitCallbackResult(taskBody,timeout = 0) {
 
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(url.url)
-          //that.log(data)
+          //console.log(url.url)
+          //console.log(data)
           data = JSON.parse(data);
-          that.log(data.toast.subTitle)
+          console.log(data.toast.subTitle)
         } catch (e) {
           $.logErr(e, resp);
         } finally {
@@ -609,10 +609,10 @@ function zoo_pk_assistGroup(inviteId = "",timeout = 0) {
         },
         body : `functionId=zoo_pk_assistGroup&body={"confirmFlag":1,"inviteId":"${inviteId}","ss":"{\\"extraData\\":{\\"is_trust\\":true,\\"sign\\":\\"${sign}\\",\\"time\\":${time},\\"encrypt\\":\\"3\\",\\"nonstr\\":\\"${nonstr}\\",\\"jj\\":\\"\\",\\"token\\":\\"d89985df35e6a2227fd2e85fe78116d2\\",\\"cf_v\\":\\"1.0.1\\",\\"client_version\\":\\"2.2.1\\",\\"buttonid\\":\\"pkPopupHelpButtonId\\",\\"sceneid\\":\\"sideTaskh5\\"},\\"secretp\\":\\"${secretp}\\",\\"random\\":\\"${rnd}\\"}"}&client=wh5&clientVersion=1.0.0`
       }
-      //that.log(url.body)
+      //console.log(url.body)
       $.post(url, async (err, resp, data) => {
         try {
-         // that.log('商圈助力：' + data)
+         // console.log('商圈助力：' + data)
           data = JSON.parse(data);
         } catch (e) {
           $.logErr(e, resp);
@@ -644,12 +644,12 @@ function zoo_getHomeData(inviteId= "",timeout = 0) {
       }
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(url.body)
+          //console.log(url.body)
           //if (merge.black)  return ;
           data = JSON.parse(data);
           if (data.code === 0) {
             if (inviteId !== "") {
-              //that.log('zoo_getHomeData2:' + JSON.stringify(data))
+              //console.log('zoo_getHomeData2:' + JSON.stringify(data))
               //if (data.data.result.homeMainInfo.guestInfo.status === 0) {
                if (true) {
                 let rnd = Math.round(Math.random()*1e6)
@@ -665,7 +665,7 @@ function zoo_getHomeData(inviteId= "",timeout = 0) {
               }
               return
             }
-            //that.log('zoo_getHomeData:' + JSON.stringify(data))
+            //console.log('zoo_getHomeData:' + JSON.stringify(data))
             secretp = data.data.result.homeMainInfo.secretp
             await zoo_collectProduceScore();
             await zoo_pk_getHomeData('sSKNX-MpqKPR4M9sER0OjqZ7MpK2-RQ_CxCKTbBOhmKInSJukww_AlI')
@@ -708,7 +708,7 @@ function collectFriendRecordColor(timeout = 0) {
       }
       $.post(url, async (err, resp, data) => {
         try {
-        //   that.log(data)
+        //   console.log(data)
           //data = JSON.parse(data);
         } catch (e) {
           $.logErr(e, resp);
@@ -740,7 +740,7 @@ function getEncryptedPinColor(timeout = 0) {
       $.post(url, async (err, resp, data) => {
         try {
           data = JSON.parse(data);
-          that.log('助力码:'+ data.result)
+          console.log('助力码:'+ data.result)
         } catch (e) {
           $.logErr(e, resp);
         } finally {
@@ -770,9 +770,9 @@ function zoo_raise(timeout = 0) {
       }
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(data)
+          //console.log(data)
           data = JSON.parse(data);
-          that.log('解锁结果：'+ (data.data.bizCode||'成功'))
+          console.log('解锁结果：'+ (data.data.bizCode||'成功'))
         } catch (e) {
           $.logErr(e, resp);
         } finally {
@@ -810,7 +810,7 @@ function qryCompositeMaterials(timeout = 0) {
       }
       $.post(url, async (err, resp, data) => {
         try {
-          //that.log(data)
+          //console.log(data)
           data = JSON.parse(data);
           let obj=data.data;
           if(obj){
@@ -878,10 +878,10 @@ function zoo_pk_getHomeData(body = "",timeout = 0) {
 						}
 						await zoo_pk_assistGroup(body);
 					} else {
-				// 		that.log(data);
+				// 		console.log(data);
 						data = JSON.parse(data);
 
-						that.log('您的商圈助力码：' + data.data.result.groupInfo
+						console.log('您的商圈助力码：' + data.data.result.groupInfo
 							.groupAssistInviteId)
 					}
 				} catch (e) {
@@ -1025,7 +1025,7 @@ function initial() {
 }
 //通知
 function msgShow() {
-  that.log("\n\n京东账号："+merge.nickname + ' 任务已做完！\n如有未完成的任务，请多执行几次')
+  console.log("\n\n京东账号："+merge.nickname + ' 任务已做完！\n如有未完成的任务，请多执行几次')
  //$.msg($.Name,"","京东账号："+merge.nickname + ' 任务已做完！\n如有未完成的任务，请多执行几次')
 }
 
@@ -1037,8 +1037,8 @@ function safeGet(data) {
       return true;
     }
   } catch (e) {
-    that.log(e);
-    that.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
+    console.log(e);
+    console.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
     return false;
   }
 }
@@ -1048,7 +1048,7 @@ function jsonParse(str) {
     try {
       return JSON.parse(str);
     } catch (e) {
-      that.log(e);
+      console.log(e);
       $.msg($.name, '', '不要在BoxJS手动复制粘贴修改cookie')
       return [];
     }
