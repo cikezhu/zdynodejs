@@ -8,22 +8,22 @@
   hostname = restapi.amap.com
   quanx:
   [task_local]
-  0 * * * * https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子618, enabled=true
+  0 * * * * https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子六一八, enabled=true
   [rewrite_local]
   https:\/\/restapi\.amap\.com\/v3\/geocode url script-request-body https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js
   loon:
   [Script]
-  http-request https:\/\/restapi\.amap\.com\/v3\/geocode script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, requires-body=true, timeout=10, tag=狗子618cookie
-  cron "0 * * * *" script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子618
+  http-request https:\/\/restapi\.amap\.com\/v3\/geocode script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, requires-body=true, timeout=10, tag=狗子六一八cookie
+  cron "0 * * * *" script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子六一八
   surge:
   [Script]
-  狗子618 = type=cron,cronexp=0 * * * *,timeout=60,script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js,
-  狗子618cookie = type=http-request,pattern=https:\/\/restapi\.amap\.com\/v3\/geocode,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js
+  狗子六一八 = type=cron,cronexp=0 * * * *,timeout=60,script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js,
+  狗子六一八cookie = type=http-request,pattern=https:\/\/restapi\.amap\.com\/v3\/geocode,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js
  *
  *  
  **/
 
-const $ = new Env("狗子618");
+const $ = new Env("狗子六一八");
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
