@@ -58,7 +58,7 @@ function QueryJDUserInfo(timeout = 0) {
     setTimeout( ()=>{
       let url = {
         "url": `https://wq.jd.com/user/info/QueryJDUserInfo?sceneval=2`,
-        "headers": {
+        "headers": { 
           "Accept": "application/json,text/plain, */*",
           "Content-Type": "application/x-www-form-urlencoded",
           "Accept-Encoding": "gzip, deflate, br",
