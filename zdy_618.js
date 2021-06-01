@@ -5,20 +5,17 @@
  * @LastEditors: cikezhu
  * @LastEditTime: 2021-06-01 13:53:15
  
-  hostname = restapi.amap.com
   quanx:
   [task_local]
-  0 * * * * https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子六一八, enabled=true
-  [rewrite_local]
-  https:\/\/restapi\.amap\.com\/v3\/geocode url script-request-body https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js
+  * * * * * https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子六一八, enabled=true
+
   loon:
   [Script]
-  http-request https:\/\/restapi\.amap\.com\/v3\/geocode script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, requires-body=true, timeout=10, tag=狗子六一八cookie
-  cron "0 * * * *" script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子六一八
+  cron "* * * * *" script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js, tag=狗子六一八
+
   surge:
   [Script]
-  狗子六一八 = type=cron,cronexp=0 * * * *,timeout=60,script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js,
-  狗子六一八cookie = type=http-request,pattern=https:\/\/restapi\.amap\.com\/v3\/geocode,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js
+  狗子六一八 = type=cron,cronexp=* * * * *,timeout=60,script-path=https://raw.githubusercontent.com/cikezhu/zdynodejs/master/zdy_618.js,
  *
  *  
  **/
