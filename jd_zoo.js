@@ -83,7 +83,7 @@ function QueryJDUserInfo(timeout = 0) {
             if (data['retcode'] === 0) {
               merge.nickname = (data['base'] && data['base'].nickname) || merge.UserName;
             } else {
-              merge.nickName = merge.UserName
+              merge.nickname = merge.UserName
             }
           } else {
             console.log(`京东服务器返回空数据`)
