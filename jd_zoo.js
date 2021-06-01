@@ -69,7 +69,7 @@ function QueryJDUserInfo(timeout = 0) {
           "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Mobile/15E148 Safari/604.1"
         }
       }
-      $.post(options, (err, resp, data) => {
+      $.post(url, (err, resp, data) => {
         try {
           if (err) {
             console.log(`${JSON.stringify(err)}`)
