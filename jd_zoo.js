@@ -30,6 +30,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action?functionId=`;
     if (cookie) {
       if (i) console.log(`\n***************开始京东账号${i + 1}***************`)
       initial();
+      merge.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       await  QueryJDUserInfo();
       if (!merge.enabled)  //cookie不可用
       {
@@ -56,24 +57,43 @@ function QueryJDUserInfo(timeout = 0) {
   return new Promise((resolve) => {
     setTimeout( ()=>{
       let url = {
-        url : `https://wq.jd.com/user/info/QueryJDUserInfo?sceneval=2`,
-        headers : {
-          'Referer' : `https://wqs.jd.com/my/iserinfo.html`,
-          'Cookie' : cookie
+        "url": `https://wq.jd.com/user/info/QueryJDUserInfo?sceneval=2`,
+        "headers": {
+          "Accept": "application/json,text/plain, */*",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept-Encoding": "gzip, deflate, br",
+          "Accept-Language": "zh-cn",
+          "Connection": "keep-alive",
+          "Cookie": cookie,
+          "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
+          "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Mobile/15E148 Safari/604.1"
         }
       }
-      $.get(url, (err, resp, data) => {
+      $.post(options, (err, resp, data) => {
         try {
-          data = JSON.parse(data);
-          if (data.retcode === 13) {
-            merge.enabled = false
-            return
+          if (err) {
+            console.log(`${JSON.stringify(err)}`)
+            console.log(`${$.name} API请求失败，请检查网路重试`)
+          } else {
+            if (data) {
+              data = JSON.parse(data);
+              if (data['retcode'] === 13) {
+                merge.enabled = false; //cookie过期
+                return
+              }
+              if (data['retcode'] === 0) {
+                merge.nickname = (data['base'] && data['base'].nickname) || merge.UserName;
+              } else {
+                merge.nickName = merge.UserName
+              }
+            } else {
+              console.log(`京东服务器返回空数据`)
+            }
           }
-          merge.nickname = data.base.nickname;
         } catch (e) {
-          $.logErr(e, resp);
+          $.logErr(e, resp)
         } finally {
-          resolve()
+          resolve();
         }
       })
     },timeout)
@@ -1022,6 +1042,7 @@ function getSign (t) {
 function initial() {
   merge = {
     nickname: "",
+    UserName: "",
     enabled: true,
     end: false,
     black: false
