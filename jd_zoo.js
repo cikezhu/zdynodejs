@@ -54,49 +54,47 @@ const JD_API_HOST = `https://api.m.jd.com/client.action?functionId=`;
 
 //获取昵称（直接用，勿删）
 function QueryJDUserInfo(timeout = 0) {
-  return new Promise((resolve) => {
-    setTimeout( ()=>{
-      let url = {
-        "url": `https://wq.jd.com/user/info/QueryJDUserInfo?sceneval=2`,
-        "headers": { 
-          "Accept": "application/json,text/plain, */*",
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Accept-Encoding": "gzip, deflate, br",
-          "Accept-Language": "zh-cn",
-          "Connection": "keep-alive",
-          "Cookie": cookie,
-          "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-          "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Mobile/15E148 Safari/604.1"
-        }
+  return new Promise(async resolve => {
+    const options = {
+      "url": `https://wq.jd.com/user/info/QueryJDUserInfo?sceneval=2`,
+      "headers": {
+        "Accept": "application/json,text/plain, */*",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "zh-cn",
+        "Connection": "keep-alive",
+        "Cookie": cookie,
+        "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Mobile/15E148 Safari/604.1"
       }
-      $.post(url, (err, resp, data) => {
-        try {
-          if (err) {
-            console.log(`${JSON.stringify(err)}`)
-            console.log(`${$.name} API请求失败，请检查网路重试`)
-          } else {
-            if (data) {
-              data = JSON.parse(data);
-              if (data['retcode'] === 13) {
-                merge.enabled = false; //cookie过期
-                return
-              }
-              if (data['retcode'] === 0) {
-                merge.nickname = (data['base'] && data['base'].nickname) || merge.UserName;
-              } else {
-                merge.nickName = merge.UserName
-              }
-            } else {
-              console.log(`京东服务器返回空数据`)
+    }
+    $.post(options, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            data = JSON.parse(data);
+            if (data['retcode'] === 13) {
+              merge.enabled = false; //cookie过期
+              return
             }
+            if (data['retcode'] === 0) {
+              merge.nickname = (data['base'] && data['base'].nickname) || merge.UserName;
+            } else {
+              merge.nickName = merge.UserName
+            }
+          } else {
+            console.log(`京东服务器返回空数据`)
           }
-        } catch (e) {
-          $.logErr(e, resp)
-        } finally {
-          resolve();
         }
-      })
-    },timeout)
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
   })
 }
 
